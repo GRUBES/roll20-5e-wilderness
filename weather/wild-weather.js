@@ -1,15 +1,15 @@
 /**
  * Provides methods for generating random Weather effects based on the rules in the DMG p109
  *
+ * @namespace
+ *
  * @author Draico Dorath
  * @copyright 2018
  * @license MIT
  *
  * @see DMG109
  */
-let WILD = WILD || {};
-
-WILD.Weather = (() => {
+let WildWeather = (() => {
     'use strict';
 
     /**
