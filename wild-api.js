@@ -13,22 +13,19 @@
 (() => {
     'use strict';
 
-    on("ready", () => { log("[WILD] Loaded."); });
-    on("chat:message", routeApiCall);
+    const router = {
+        weather: {
+            "all": WildWeather.all,
+            "precip": WildWeather.precipitation,
+            "temp": WildWeather.temperature,
+            "wind": WildWeather.wind
+        }
+    };
 
     function routeApiCall(msg) {
-        const router = {
-            weather: {
-                "precip": WildWeather.precipitation,
-                "temp": WildWeather.temperature,
-                "wind": WildWeather.wind
-            }
-        };
-
         if (!isCommand(msg)) { return; }
 
-        exec(router, parseCommand(msg));
-
+        exec(router, parseCommand(msg), msg);
     }
 
     function isCommand(msg) {
@@ -59,24 +56,30 @@
     }
 
     /**
-     * Invokes the given command using the given route structure
+     * Invokes the given command using the given route structure and passing along the given msg
      *
      * @param routes {Object} Router that maps API calls to actual module methods
      * @param commandPath {string[]} List of words in the command without the "wild-" prefix
+     * @param msg {Object} Roll20 chat message that triggered this command
      *
      * @returns {void}
      *
      * @private
      * @function exec
      */
-    function exec(routes, commandPath) {
+    function exec(routes, commandPath, msg) {
         let moduleName = _.head(commandPath);
-        let commandName = _.tail(commandPath);
+        let commandName = _.last(commandPath);
 
         if (!routes[moduleName] || (typeof routes[moduleName][commandName] !== "function")) {
             return;
         }
 
-        routes[moduleName][command](msg.content);
+        // Split off the command so that only the input parameters remain
+        let input = _.tail(msg.content.split(" "));
+        routes[moduleName][commandName](input);
     }
+
+    on("chat:message", routeApiCall);
+    on("ready", () => { log("[WILD] Loaded."); });
 })();

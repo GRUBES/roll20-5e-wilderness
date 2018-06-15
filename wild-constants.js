@@ -6,7 +6,7 @@
  *
  * @license MIT
  */
-var WildConstants = (() => {
+let WildConstants = (() => {
     'use strict';
 
     const prefix = "wild-";

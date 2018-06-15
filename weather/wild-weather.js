@@ -43,23 +43,45 @@ let WildWeather = (() => {
     };
 
     /**
-     * Generates a random temperature based on the given seasonal normal
+     * Generates a random temperature based on the given seasonal baseTemp.
      *
-     * @param normal {Number} The normal temperature for the current season in degrees Fahrenheit
+     * Accepts a Number so that it can be called directly from other scripts or a String[] so that it can be called
+     * from the Chat API module
+     *
+     * @param [baseTemp=75] {Number|String[]} The baseTemp temperature for the current season in degrees Fahrenheit
      *
      * @returns {Number} The rolled temperature
+     *
+     * @example
+     * !wild-weather-temp 40
+     * // rolls for temperature from Chat with 40 as "normal"
+     * @example
+     * !wild-weather-temp
+     * // rolls for temperature from Chat with 75 as "normal"
+     *
+     * @example
+     * WildWeather.temperature(40)
+     * // rolls for temperature with 40 as "normal"
+     * @example
+     * WildWeather.temperature()
+     * // rolls for temperature with 75 as "normal"
      *
      * @see DMG109
      *
      * @static
      * @function temperature
      */
-    function temperature(normal) {
+    function temperature(baseTemp=75) {
+        // FIXME Would like a better design for handling both chat and direct invocation
+        if (_.isArray(baseTemp)) {
+            baseTemp = parseInt(_.head(baseTemp), 10) || 75;
+        }
+
         let roll = randomInteger(20);
 
-        if (roll < 15) { return normal; }
-        if (roll < 18) { return normal - (randomInteger(4) * 10); }
-        return normal + (randomInteger(4) * 10);
+        if (roll < 15) { return baseTemp; }
+        if (roll < 18) { return baseTemp - (randomInteger(4) * 10); }
+        return baseTemp + (randomInteger(4) * 10);
     }
 
     /**
@@ -98,7 +120,34 @@ let WildWeather = (() => {
         return Precip.HEAVY;
     }
 
+    /**
+     * Convenience method for rolling all of the weather conditions at once. Can optionally provide a baseTemp
+     * for the Temperature roll.
+     *
+     * @param [baseTemp=75] {Number} A typical seasonal temperature
+     *
+     * @returns {{temperature: Number, precipitation: Precip, wind: Winds}}
+     *
+     * @static
+     * @function all
+     */
+    function all(baseTemp) {
+        let result = {
+            temperature: temperature(baseTemp),
+            precipitation: precipitation(),
+            wind: wind()
+        };
+        log(`[WILD] ${JSON.stringify(result)}`);
+        return result;
+        // return {
+        //     temperature: temperature(baseTemp),
+        //     precipitation: precipitation(),
+        //     wind: wind()
+        // };
+    }
+
     return {
+        all: all,
         temperature: temperature,
         wind: wind,
         precipitation: precipitation
