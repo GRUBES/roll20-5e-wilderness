@@ -17,7 +17,7 @@ let WildWeather = (() => {
      *
      * @enum {Number}
      *
-     * @private
+     * @static
      * @readonly
      * @property Winds
      */
@@ -32,7 +32,7 @@ let WildWeather = (() => {
      *
      * @enum {Number}
      *
-     * @private
+     * @static
      * @readonly
      * @property Precip
      */
@@ -45,19 +45,9 @@ let WildWeather = (() => {
     /**
      * Generates a random temperature based on the given seasonal baseTemp.
      *
-     * Accepts a Number so that it can be called directly from other scripts or a String[] so that it can be called
-     * from the Chat API module
-     *
-     * @param [baseTemp=75] {Number|String[]} The baseTemp temperature for the current season in degrees Fahrenheit
+     * @param [baseTemp=75] {Number} The baseTemp temperature for the current season in degrees Fahrenheit
      *
      * @returns {Number} The rolled temperature
-     *
-     * @example
-     * !wild-weather-temp 40
-     * // rolls for temperature from Chat with 40 as "normal"
-     * @example
-     * !wild-weather-temp
-     * // rolls for temperature from Chat with 75 as "normal"
      *
      * @example
      * WildWeather.temperature(40)
@@ -72,11 +62,6 @@ let WildWeather = (() => {
      * @function temperature
      */
     function temperature(baseTemp=75) {
-        // FIXME Would like a better design for handling both chat and direct invocation
-        if (_.isArray(baseTemp)) {
-            baseTemp = parseInt(_.head(baseTemp), 10) || 75;
-        }
-
         let roll = randomInteger(20);
 
         if (roll < 15) { return baseTemp; }
@@ -132,24 +117,19 @@ let WildWeather = (() => {
      * @function all
      */
     function all(baseTemp) {
-        let result = {
+        return {
             temperature: temperature(baseTemp),
             precipitation: precipitation(),
             wind: wind()
         };
-        log(`[WILD] ${JSON.stringify(result)}`);
-        return result;
-        // return {
-        //     temperature: temperature(baseTemp),
-        //     precipitation: precipitation(),
-        //     wind: wind()
-        // };
     }
 
     return {
         all: all,
+        Precip: Precip,
+        precipitation: precipitation,
         temperature: temperature,
         wind: wind,
-        precipitation: precipitation
+        Winds: Winds
     };
 })();
