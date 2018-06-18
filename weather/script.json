@@ -1,5 +1,5 @@
 {
-  "name": "Weather Conditions",
+  "name": "5e Weather Conditions API",
   "script": "wild-weather-api.js",
   "version": "0.1",
   "previousversions": [],
@@ -7,7 +7,7 @@
   "authors": "Draico Dorath",
   "roll20userid": "2617536",
   "useroptions": [],
-  "dependencies": ["Weather Conditions"],
+  "dependencies": ["5e Weather Conditions Core"],
   "modifies": {},
   "conflicts": []
 }

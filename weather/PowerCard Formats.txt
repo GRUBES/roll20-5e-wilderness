@@ -1,0 +1,1 @@
+weather: --txcolor|#5EAE4D --bgcolor|#111111 --titlefontshadow|none --orowbg|#DED07F --erowbg|#D0BE5C

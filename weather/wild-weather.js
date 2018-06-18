@@ -9,7 +9,7 @@
  *
  * @see DMG109
  */
-let WildWeather = (() => {
+const WildWeather = (() => {
     'use strict';
 
     /**

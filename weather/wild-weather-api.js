@@ -15,13 +15,6 @@
     const prefix = "wild-weather-";
     const commandPrefix = `!${prefix}`;
 
-    const routes = {
-        "all": WildWeatherChat.all,
-        "precip": WildWeatherChat.precipitation,
-        "temp": WildWeatherChat.temperature,
-        "wind": WildWeatherChat.wind
-    };
-
     function route(msg) {
         if (!isCommand(msg)) { return; }
 
@@ -81,6 +74,13 @@
      * @function execute
      */
     function execute(command, input) {
+        const routes = {
+            "all": WildWeatherProxy.all,
+            "precip": WildWeatherProxy.precipitation,
+            "temp": WildWeatherProxy.temperature,
+            "wind": WildWeatherProxy.wind
+        };
+
         if (!(routes[command] && (typeof routes[command] === "function"))) {
             return;
         }
@@ -90,4 +90,5 @@
 
     on("chat:message", route);
     on("ready", () => { log("[WILD Weather] Loaded."); });
+
 })();

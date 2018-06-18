@@ -1,5 +1,5 @@
 /**
- * Proxy between the Weather module and the Roll20 chat interface
+ * Proxy between the Weather module and the PowerCards interface
  *
  * @namespace
  *
@@ -13,6 +13,8 @@ const WildWeatherProxy = (() => {
     'use strict';
 
     const SPEAKING_AS = "Weather";
+
+    const POWER_FORMAT = "weather";
 
     let WindLabels = {};
     WindLabels[WildWeather.Winds.NONE] = "None";
@@ -41,9 +43,18 @@ const WildWeatherProxy = (() => {
      * @function all
      */
     function all(baseTemp=75) {
-        wind();
-        precipitation();
-        temperature(baseTemp);
+        let windSpeed = WildWeather.wind();
+        let precip = WildWeather.precipitation();
+        let temp = WildWeather.temperature(parseInt(baseTemp, 10) || 75);
+        let powerCard = `!power {{
+            --format|${POWER_FORMAT}
+            --name|Current Weather
+            --Temperature|${temp}F
+            --Wind Speed|${WindLabels[windSpeed]}
+            --Precipitation|${PrecipLabels[precip]}
+        }}`;
+
+        sendChat(SPEAKING_AS, powerCard);
     }
 
     /**
@@ -60,8 +71,13 @@ const WildWeatherProxy = (() => {
      */
     function wind() {
         let windSpeed = WildWeather.wind();
+        let powerCard = `!power {{
+            --format|${POWER_FORMAT}
+            --name|Current Wind Speed
+            --!tag|${WindLabels[windSpeed]}
+        }}`;
 
-        sendChat(SPEAKING_AS, `Wind: ${WindLabels[windSpeed]}`);
+        sendChat(SPEAKING_AS, powerCard);
     }
 
     /**
@@ -78,8 +94,13 @@ const WildWeatherProxy = (() => {
      */
     function precipitation() {
         let precip = WildWeather.precipitation();
+        let powerCard = `!power {{
+            --format|${POWER_FORMAT}
+            --name|Current Precipitation
+            --!tag|${PrecipLabels[precip]}
+        }}`;
 
-        sendChat(SPEAKING_AS, `Precipitation: ${PrecipLabels[precip]}`);
+        sendChat(SPEAKING_AS, powerCard);
     }
 
     /**
@@ -102,8 +123,13 @@ const WildWeatherProxy = (() => {
      */
     function temperature(baseTemp=75) {
         let temp = WildWeather.temperature(parseInt(baseTemp, 10) || 75);
+        let powerCard = `!power {{
+            --format|${POWER_FORMAT}
+            --name|Current Temperature
+            --!tag|${temp}F
+        }}`;
 
-        sendChat(SPEAKING_AS, `Temperature: ${temp}F`);
+        sendChat(SPEAKING_AS, powerCard);
     }
 
     return {
@@ -113,3 +139,7 @@ const WildWeatherProxy = (() => {
         precipitation: precipitation
     };
 })();
+
+on("ready", () => {
+    log("[WILD Weather] PowerCards proxy module loaded.");
+});
