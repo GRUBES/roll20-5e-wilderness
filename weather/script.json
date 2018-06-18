@@ -1,0 +1,13 @@
+{
+  "name": "Weather Conditions",
+  "script": "wild-weather-api.js",
+  "version": "0.1",
+  "previousversions": [],
+  "description": "Adds chat commands for generating Weather Conditions based on the Wilderness Survival rules in the DMG p109.",
+  "authors": "Draico Dorath",
+  "roll20userid": "2617536",
+  "useroptions": [],
+  "dependencies": ["Weather Conditions"],
+  "modifies": {},
+  "conflicts": []
+}
