@@ -1,31 +1,95 @@
 /**
  * Proxy between the Weather module and the PowerCards interface
  *
- * @namespace
+ * @module wild5e/weather/powercard
+ *
+ * @requires module:wild5e/weather/core
  *
  * @author Draico Dorath
  * @copyright 2018
  * @license MIT
  *
- * @see WildWeather
+ * @see module:wild5e/weather/core
+ * @see module:wild5e/weather/api
  */
-const WildWeatherProxy = (() => {
-    'use strict';
 
-    const SPEAKING_AS = "Weather";
+import  * as WildWeather from "./wild-weather";
 
-    const POWER_FORMAT = "weather";
+// Sender used for chat messages
+const SPEAKING_AS = "Weather";
 
-    let WindLabels = {};
-    WindLabels[WildWeather.Winds.NONE] = "None";
-    WindLabels[WildWeather.Winds.LIGHT] = "Light";
-    WindLabels[WildWeather.Winds.STRONG] = "Strong";
+// Name of PowerCard Format to use
+const POWER_FORMAT = "weather";
 
-    let PrecipLabels = {};
-    PrecipLabels[WildWeather.Precip.NONE] = "None";
-    PrecipLabels[WildWeather.Precip.LIGHT] = "Light";
-    PrecipLabels[WildWeather.Precip.HEAVY] = "Heavy";
+// Display names for wind speeds
+const WindLabels = {
+    [WildWeather.Winds.NONE]: "None",
+    [WildWeather.Winds.LIGHT]: "Light",
+    [WildWeather.Winds.STRONG]: "Strong"
+};
 
+// Display names for precipitation levels
+const PrecipLabels = {
+    [WildWeather.Precip.NONE]: "None",
+    [WildWeather.Precip.LIGHT]: "Light",
+    [WildWeather.Precip.HEAVY]: "Heavy"
+};
+
+// wild5e/weather/core#all proxy
+function rollAll(baseTemp=75) {
+    let windSpeed = WildWeather.wind();
+    let precip = WildWeather.precipitation();
+    let temp = WildWeather.temperature(parseInt(baseTemp, 10) || 75);
+    let powerCard = `!power {{
+        --format|${POWER_FORMAT}
+        --name|Current Weather
+        --Temperature|${temp}F
+        --Wind Speed|${WindLabels[windSpeed]}
+        --Precipitation|${PrecipLabels[precip]}
+    }}`;
+
+    sendChat(SPEAKING_AS, powerCard);
+}
+
+// wild5e/weather/core#precipitation proxy
+function rollPrecip() {
+    let precip = WildWeather.precipitation();
+    let powerCard = `!power {{
+        --format|${POWER_FORMAT}
+        --name|Current Precipitation
+        --!tag|${PrecipLabels[precip]}
+    }}`;
+
+    sendChat(SPEAKING_AS, powerCard);
+}
+
+// wild5e/weather/core#temperature proxy
+function rollTemp(baseTemp=75) {
+    let temp = WildWeather.temperature(parseInt(baseTemp, 10) || 75);
+    let powerCard = `!power {{
+        --format|${POWER_FORMAT}
+        --name|Current Temperature
+        --!tag|${temp}F
+    }}`;
+
+    sendChat(SPEAKING_AS, powerCard);
+}
+
+// wild5e/weather/core#wind proxy
+function rollWind() {
+    let windSpeed = WildWeather.wind();
+    let powerCard = `!power {{
+        --format|${POWER_FORMAT}
+        --name|Current Wind Speed
+        --!tag|${WindLabels[windSpeed]}
+    }}`;
+
+    sendChat(SPEAKING_AS, powerCard);
+}
+
+on("ready", () => { log("[WILD Weather] PowerCards proxy module loaded."); });
+
+export {
     /**
      * Proxies random generation of all weather conditions for the chat interface
      *
@@ -39,70 +103,9 @@ const WildWeatherProxy = (() => {
      * !wild-weather-all 30
      * // rolls for temperature, wind speeds, and precipitation levels with 30 as "normal" temperature
      *
-     * @static
-     * @function all
+     * @function
      */
-    function all(baseTemp=75) {
-        let windSpeed = WildWeather.wind();
-        let precip = WildWeather.precipitation();
-        let temp = WildWeather.temperature(parseInt(baseTemp, 10) || 75);
-        let powerCard = `!power {{
-            --format|${POWER_FORMAT}
-            --name|Current Weather
-            --Temperature|${temp}F
-            --Wind Speed|${WindLabels[windSpeed]}
-            --Precipitation|${PrecipLabels[precip]}
-        }}`;
-
-        sendChat(SPEAKING_AS, powerCard);
-    }
-
-    /**
-     * Proxies random wind speed generation for the chat interface
-     *
-     * @returns {void} Prints the generated wind speed to the chat interface
-     *
-     * @example
-     * !wild-weather-wind
-     * // rolls for wind speeds
-     *
-     * @static
-     * @function wind
-     */
-    function wind() {
-        let windSpeed = WildWeather.wind();
-        let powerCard = `!power {{
-            --format|${POWER_FORMAT}
-            --name|Current Wind Speed
-            --!tag|${WindLabels[windSpeed]}
-        }}`;
-
-        sendChat(SPEAKING_AS, powerCard);
-    }
-
-    /**
-     * Proxies random precipitation generation for the chat interface
-     *
-     * @returns {void} Prints the generated precipitation to the chat interface
-     *
-     * @example
-     * !wild-weather-precip
-     * // rolls for precipitation levels
-     *
-     * @static
-     * @function precipitation
-     */
-    function precipitation() {
-        let precip = WildWeather.precipitation();
-        let powerCard = `!power {{
-            --format|${POWER_FORMAT}
-            --name|Current Precipitation
-            --!tag|${PrecipLabels[precip]}
-        }}`;
-
-        sendChat(SPEAKING_AS, powerCard);
-    }
-
+    rollAll,
     /**
      * Proxies random temperature generation based on the given seasonal baseTemp for the chat interface
      *
@@ -118,28 +121,31 @@ const WildWeatherProxy = (() => {
      * !wild-weather-temp
      * // rolls for temperature from Chat with 75 as "normal"
      *
-     * @static
-     * @function temperature
+     * @function
      */
-    function temperature(baseTemp=75) {
-        let temp = WildWeather.temperature(parseInt(baseTemp, 10) || 75);
-        let powerCard = `!power {{
-            --format|${POWER_FORMAT}
-            --name|Current Temperature
-            --!tag|${temp}F
-        }}`;
-
-        sendChat(SPEAKING_AS, powerCard);
-    }
-
-    return {
-        all: all,
-        temperature: temperature,
-        wind: wind,
-        precipitation: precipitation
-    };
-})();
-
-on("ready", () => {
-    log("[WILD Weather] PowerCards proxy module loaded.");
-});
+    rollTemp,
+    /**
+     * Proxies random wind speed generation for the chat interface
+     *
+     * @returns {void} Prints the generated wind speed to the chat interface
+     *
+     * @example
+     * !wild-weather-wind
+     * // rolls for wind speeds
+     *
+     * @function
+     */
+    rollWind,
+    /**
+     * Proxies random precipitation generation for the chat interface
+     *
+     * @returns {void} Prints the generated precipitation to the chat interface
+     *
+     * @example
+     * !wild-weather-precip
+     * // rolls for precipitation levels
+     *
+     * @function
+     */
+    rollPrecip
+}
