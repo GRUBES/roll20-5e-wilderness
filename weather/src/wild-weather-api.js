@@ -74,6 +74,7 @@
      * @function execute
      */
     function execute(command, input) {
+        // XXX Depends on global reference, but can't figure out a better depenency management structure
         const routes = {
             "all": WildWeatherProxy.all,
             "precip": WildWeatherProxy.precipitation,
