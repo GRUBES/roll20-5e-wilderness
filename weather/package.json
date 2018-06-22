@@ -4,9 +4,9 @@
   "description": "Implements D&D 5e Weather Conditions rules for the Roll20 VTT",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack"
+    "build": "rollup -c"
   },
-  "main": "index.js",
+  "main": "wild5e-weather.js",
   "repository": {
     "type": "git",
     "url": "git@etg-gh:GRUBES/roll20-5e-wilderness.git"
@@ -17,5 +17,7 @@
   ],
   "author": "Draico Dorath",
   "license": "MIT",
-  "devDependencies": {}
+  "devDependencies": {
+    "rollup-plugin-alias": "^1.4.0"
+  }
 }
