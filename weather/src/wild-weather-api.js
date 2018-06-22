@@ -8,7 +8,7 @@
  * @license MIT
  */
 
-import * as WildWeatherProxy from "./wild-weather-chat";
+import * as WildWeatherProxy from "wildWeatherProxy";
 
 // API Command prefix
 const prefix = "wild-weather-";

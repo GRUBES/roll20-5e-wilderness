@@ -4,7 +4,9 @@
   "description": "Implements D&D 5e Weather Conditions rules for the Roll20 VTT",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rollup -c"
+    "build": "npm run build-chat && npm run build-power",
+    "build-chat": "rollup -c",
+    "build-power": "rollup -c rollup.config.powercard.js"
   },
   "main": "wild5e-weather.js",
   "repository": {
