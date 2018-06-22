@@ -78,7 +78,7 @@ function parseCommand(msg) {
  */
 function parseInput(msg) {
     // Dumb implementation; will break if e.g. needs to accept text strings with spaces in them
-    return _.tail(msg.content.split(" "))
+    return _.tail(msg.content.split(/\s+/));
 }
 
 /**
